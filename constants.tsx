@@ -1,25 +1,24 @@
 
-import React from 'react';
-import { Channel, User } from './types';
+import { Channel, User } from './types.ts';
 
 export const CHANNELS: Channel[] = [
-  { id: 'general', name: 'General Chat', description: 'Public discussion for everyone', icon: '🌍' },
-  { id: 'math', name: 'Math Class', description: 'Calculus and Algebra help', icon: '📐' },
-  { id: 'science', name: 'Science Lab', description: 'Experiments and reports', icon: '🧪' },
-  { id: 'homework', name: 'Homework Help', description: 'Get help with your tasks', icon: '📚' },
-  { id: 'announcements', name: 'Announcements', description: 'Official news from teachers', icon: '📢' },
+  { id: 'general', name: 'Ruang Tengah', description: 'Diskusi umum XI DKV', icon: '🎨' },
+  { id: 'design-feedback', name: 'Design Review', description: 'Kritik dan saran karya', icon: '👁️' },
+  { id: 'tutorial', name: 'Tips & Trick', description: 'Sharing software & asset', icon: '🪄' },
+  { id: 'project-deadline', name: 'Deadline Info', description: 'Info tugas & project', icon: '📅' },
+  { id: 'announcements', name: 'Pengumuman', description: 'Informasi resmi sekolah', icon: '📢' },
 ];
 
 export const USERS: User[] = [
-  { id: 'u1', name: 'Alice (Teacher)', avatar: 'https://picsum.photos/seed/alice/100', role: 'teacher', isOnline: true },
-  { id: 'u2', name: 'Bob', avatar: 'https://picsum.photos/seed/bob/100', role: 'student', isOnline: true },
-  { id: 'u3', name: 'Charlie', avatar: 'https://picsum.photos/seed/charlie/100', role: 'student', isOnline: false },
-  { id: 'u4', name: 'Gemini AI', avatar: 'https://picsum.photos/seed/ai/100', role: 'assistant', isOnline: true },
-  { id: 'me', name: 'You', avatar: 'https://picsum.photos/seed/user/100', role: 'student', isOnline: true },
+  { id: 'u1', name: 'Pak Andi (Guru)', avatar: 'https://picsum.photos/seed/teacher/100', role: 'teacher', isOnline: true },
+  { id: 'u2', name: 'Budi Visual', avatar: 'https://picsum.photos/seed/budi/100', role: 'student', isOnline: true },
+  { id: 'u3', name: 'Citra Illustrator', avatar: 'https://picsum.photos/seed/citra/100', role: 'student', isOnline: false },
+  { id: 'u4', name: 'Creative Assistant AI', avatar: 'https://picsum.photos/seed/creative-ai/100', role: 'assistant', isOnline: true },
+  { id: 'me', name: 'You (Designer)', avatar: 'https://picsum.photos/seed/me/100', role: 'student', isOnline: true },
 ];
 
 export const COMMON_EMOJIS = [
-  '😀', '😂', '😍', '👍', '🔥', '🙌', '🚀', '💯', 
-  '🤔', '👀', '🎉', '❤️', '✨', '👏', '✅', '❌',
-  '📚', '📝', '🧠', '🎓', '🏫', '⏰', '💡', '🌟'
+  '😀', '😍', '👍', '🔥', '🎨', '✨', '🚀', '💯', 
+  '🖌️', '📷', '🎬', '💡', '👁️', '💻', '✏️', '📍',
+  '🌈', '📐', '🧠', '🎓', '🏫', '⏰', '🖼️', '🌟'
 ];
