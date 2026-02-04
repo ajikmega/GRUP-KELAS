@@ -1,0 +1,8 @@
+{
+  "name": "KELAS XI DKV",
+  "description": "A modern, high-performance class group chat application featuring real-time messaging simulation, emoji support, and an integrated Gemini-powered AI Class Assistant.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
