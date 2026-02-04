@@ -17,38 +17,46 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChannel, setActiveChannel }) =>
       <div className="p-8">
         <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-tighter">
           <div className="bg-gradient-to-tr from-indigo-500 to-violet-500 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-            DKV
+            XI
           </div>
           <div className="flex flex-col">
             <span className="text-sm leading-none text-indigo-400">KELAS</span>
-            <span className="text-lg">XI DKV</span>
+            <span className="text-lg uppercase tracking-tight">XI DKV</span>
           </div>
         </h1>
       </div>
       
       <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
         <div className="mb-8">
-          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Channels</p>
+          <div className="px-4 mb-4 flex items-center justify-between">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Channels</p>
+            <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">TERTUTUP</span>
+          </div>
           <div className="space-y-1">
             {CHANNELS.map(channel => (
               <button
                 key={channel.id}
                 onClick={() => setActiveChannel(channel.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
                   activeChannel === channel.id 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
                   : 'hover:bg-slate-900 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <span className="text-lg">{channel.icon}</span>
-                <span className="font-semibold text-sm truncate">{channel.name}</span>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <span className="text-lg shrink-0">{channel.icon}</span>
+                  <span className="font-semibold text-sm truncate">{channel.name}</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 ${activeChannel === channel.id ? 'text-white/60' : 'text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Online Members</p>
+          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Anggota Terverifikasi</p>
           <div className="space-y-2">
             {USERS.map(user => (
               <div key={user.id} className="flex items-center gap-3 px-4 py-1 group cursor-default">
@@ -73,13 +81,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeChannel, setActiveChannel }) =>
           <img src={USERS.find(u => u.id === 'me')?.avatar} className="w-8 h-8 rounded-full" alt="" />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-white truncate">You (Designer)</p>
-            <p className="text-[10px] text-slate-500">Active Now</p>
+            <p className="text-[10px] text-indigo-400 font-medium italic">Akses Terenkripsi</p>
           </div>
-          <button className="text-slate-400 hover:text-white transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
@@ -145,6 +148,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, user, onReact }) => 
 };
 
 export default function App() {
+  const [isVerified, setIsVerified] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState('general');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -155,9 +159,9 @@ export default function App() {
 
   useEffect(() => {
     const initialMessages: Message[] = [
-      { id: '1', senderId: 'u1', text: "Halo desainer masa depan! Jangan lupa kirim progres desain poster pameran minggu depan ya.", timestamp: Date.now() - 3600000, reactions: { '🎨': ['u2', 'u3'] }, channelId: 'general' },
-      { id: '2', senderId: 'u2', text: "Siap Pak! Baru beres sketsa kasar, tinggal trace di Illustrator.", timestamp: Date.now() - 1800000, reactions: { '🔥': ['me'] }, channelId: 'general' },
-      { id: '3', senderId: 'u4', text: "Butuh ide palet warna atau referensi layout? Tanyakan saja di sini! 🎨🖌️", timestamp: Date.now() - 600000, reactions: { '✨': ['me'] }, channelId: 'general' }
+      { id: '1', senderId: 'u1', text: "Selamat datang di ruang tertutup XI DKV. Hanya anggota kelas yang memiliki akses ke sini.", timestamp: Date.now() - 3600000, reactions: { '🛡️': ['u2', 'u3'] }, channelId: 'general' },
+      { id: '2', senderId: 'u2', text: "Siap Pak Andi! Ruangannya terasa lebih eksklusif sekarang. 🔥", timestamp: Date.now() - 1800000, reactions: { '🔥': ['me'] }, channelId: 'general' },
+      { id: '3', senderId: 'u4', text: "Saya akan membantu menjaga ketertiban dan menjawab pertanyaan akademik kalian di sini. 🎨🖌️", timestamp: Date.now() - 600000, reactions: { '✨': ['me'] }, channelId: 'general' }
     ];
     setMessages(initialMessages);
   }, []);
@@ -166,7 +170,7 @@ export default function App() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isAiTyping]);
+  }, [messages, isAiTyping, isVerified]);
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -221,6 +225,47 @@ export default function App() {
     }));
   };
 
+  if (!isVerified) {
+    return (
+      <div className="h-screen w-full bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Abstract Background Decoration */}
+        <div className="absolute top-0 -left-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-0 -right-20 w-80 h-80 bg-violet-600/20 rounded-full blur-[100px]"></div>
+        
+        <div className="max-w-md w-full glass-morphism p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative z-10 text-center animate-in fade-in zoom-in duration-700">
+          <div className="bg-gradient-to-tr from-indigo-500 to-violet-500 w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-white text-3xl font-black mb-8 shadow-2xl shadow-indigo-500/20 rotate-3">
+            XI
+          </div>
+          <h1 className="text-3xl font-black text-white mb-4 tracking-tighter uppercase">KELAS XI DKV</h1>
+          <p className="text-slate-400 text-sm mb-10 leading-relaxed font-medium">
+            Selamat datang di Ruang Chating Tertutup.<br/>Akses hanya untuk anggota terdaftar XI DKV.
+          </p>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 bg-slate-900/50 border border-white/5 rounded-2xl px-5 py-4 text-left">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span className="text-slate-300 text-sm font-medium">Enkripsi End-to-End Aktif</span>
+            </div>
+            
+            <button 
+              onClick={() => setIsVerified(true)}
+              className="w-full bg-white text-slate-950 font-black py-5 rounded-2xl hover:bg-indigo-50 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 group shadow-xl"
+            >
+              MASUK KE RUANG KELAS
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
+          
+          <p className="mt-8 text-[10px] text-slate-600 uppercase tracking-widest font-bold">Terverifikasi oleh Tim IT DKV</p>
+        </div>
+      </div>
+    );
+  }
+
   const activeChannel = CHANNELS.find(c => c.id === activeChannelId) || CHANNELS[0];
   const filteredMessages = messages.filter(m => m.channelId === activeChannelId);
 
@@ -234,8 +279,14 @@ export default function App() {
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-3">
               <span className="bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center border border-slate-200">{activeChannel.icon}</span>
               {activeChannel.name}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
             </h2>
-            <p className="text-xs text-slate-500 font-medium ml-13 px-13">{activeChannel.description}</p>
+            <p className="text-[11px] text-slate-500 font-bold ml-13 flex items-center gap-1.5 opacity-60">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+              TERHUBUNG KE SERVER KELAS
+            </p>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex -space-x-3">
@@ -247,10 +298,11 @@ export default function App() {
               </div>
             </div>
             <div className="h-8 w-px bg-slate-200"></div>
-            <button className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+            <button className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm relative group">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Cari Pesan</span>
             </button>
           </div>
         </header>
@@ -302,7 +354,7 @@ export default function App() {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={`Diskusi kreatif di #${activeChannel.id}...`}
+                placeholder={`Kirim pesan ke ruang tertutup #${activeChannel.id}...`}
                 className="flex-1 bg-transparent border-none focus:ring-0 text-[15px] font-medium placeholder:text-slate-300 py-3"
               />
               
@@ -345,11 +397,12 @@ export default function App() {
               )}
             </form>
             <div className="flex justify-between items-center mt-4 px-4">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                Creative Group Chat • <span className="text-indigo-400">Online</span>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.6)]"></span>
+                Secure Class Hub • <span className="text-indigo-400">XI DKV Authorized</span>
               </p>
               <p className="text-[11px] text-slate-400">
-                Press <span className="bg-slate-200 px-1 rounded font-bold text-slate-600">Enter</span> to send
+                Akses Dienkripsi • <span className="font-bold">Privacy First</span>
               </p>
             </div>
           </div>
