@@ -9,83 +9,103 @@ import { getAIResponse } from './services/geminiService.ts';
 interface SidebarProps {
   activeChannel: string;
   setActiveChannel: (id: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeChannel, setActiveChannel }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeChannel, setActiveChannel, isOpen, onClose }) => {
   return (
-    <div className="w-72 bg-slate-950 text-slate-300 flex flex-col h-full shrink-0 border-r border-slate-800">
-      <div className="p-8">
-        <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-tighter">
-          <div className="bg-gradient-to-tr from-indigo-500 to-violet-500 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-            XI
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm leading-none text-indigo-400">KELAS</span>
-            <span className="text-lg uppercase tracking-tight">XI DKV</span>
-          </div>
-        </h1>
-      </div>
+    <>
+      {/* Backdrop for mobile/overlay effect */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[40] lg:hidden transition-opacity animate-in fade-in"
+          onClick={onClose}
+        />
+      )}
       
-      <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
-        <div className="mb-8">
-          <div className="px-4 mb-4 flex items-center justify-between">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Channels</p>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">TERTUTUP</span>
-          </div>
-          <div className="space-y-1">
-            {CHANNELS.map(channel => (
-              <button
-                key={channel.id}
-                onClick={() => setActiveChannel(channel.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
-                  activeChannel === channel.id 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                  : 'hover:bg-slate-900 text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <span className="text-lg shrink-0">{channel.icon}</span>
-                  <span className="font-semibold text-sm truncate">{channel.name}</span>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 ${activeChannel === channel.id ? 'text-white/60' : 'text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-            ))}
-          </div>
+      <div className={`fixed inset-y-0 left-0 w-72 bg-slate-950 text-slate-300 flex flex-col h-full shrink-0 border-r border-slate-800 z-[50] transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 ${!isOpen && 'lg:hidden'}`}>
+        <div className="p-8 flex items-center justify-between">
+          <h1 className="text-xl font-black text-white flex items-center gap-3 tracking-tighter">
+            <div className="bg-gradient-to-tr from-indigo-500 to-violet-500 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              XI
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm leading-none text-indigo-400">KELAS</span>
+              <span className="text-lg uppercase tracking-tight">XI DKV</span>
+            </div>
+          </h1>
+          <button onClick={onClose} className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
+        
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
+          <div className="mb-8">
+            <div className="px-4 mb-4 flex items-center justify-between">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Channels</p>
+              <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">TERTUTUP</span>
+            </div>
+            <div className="space-y-1">
+              {CHANNELS.map(channel => (
+                <button
+                  key={channel.id}
+                  onClick={() => {
+                    setActiveChannel(channel.id);
+                    if (window.innerWidth < 1024) onClose();
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
+                    activeChannel === channel.id 
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+                    : 'hover:bg-slate-900 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <span className="text-lg shrink-0">{channel.icon}</span>
+                    <span className="font-semibold text-sm truncate">{channel.name}</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-3 w-3 ${activeChannel === channel.id ? 'text-white/60' : 'text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div>
-          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Anggota Terverifikasi</p>
-          <div className="space-y-2">
-            {USERS.map(user => (
-              <div key={user.id} className="flex items-center gap-3 px-4 py-1 group cursor-default">
-                <div className="relative">
-                  <img src={user.avatar} className="w-9 h-9 rounded-full border border-slate-700 p-0.5" alt="" />
-                  {user.isOnline && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-950"></div>
-                  )}
+          <div>
+            <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Anggota Terverifikasi</p>
+            <div className="space-y-2">
+              {USERS.map(user => (
+                <div key={user.id} className="flex items-center gap-3 px-4 py-1 group cursor-default">
+                  <div className="relative">
+                    <img src={user.avatar} className="w-9 h-9 rounded-full border border-slate-700 p-0.5" alt="" />
+                    {user.isOnline && (
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-950"></div>
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors truncate">{user.name}</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{user.role}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors truncate">{user.name}</span>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{user.role}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-4 border-t border-slate-800 bg-slate-900/50">
+          <div className="bg-slate-800 rounded-xl p-3 flex items-center gap-3">
+            <img src={USERS.find(u => u.id === 'me')?.avatar} className="w-8 h-8 rounded-full" alt="" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-white truncate">You (Designer)</p>
+              <p className="text-[10px] text-indigo-400 font-medium italic">Akses Terenkripsi</p>
+            </div>
           </div>
         </div>
       </div>
-      
-      <div className="p-4 border-t border-slate-800 bg-slate-900/50">
-        <div className="bg-slate-800 rounded-xl p-3 flex items-center gap-3">
-          <img src={USERS.find(u => u.id === 'me')?.avatar} className="w-8 h-8 rounded-full" alt="" />
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-white truncate">You (Designer)</p>
-            <p className="text-[10px] text-indigo-400 font-medium italic">Akses Terenkripsi</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -149,6 +169,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, user, onReact }) => 
 
 export default function App() {
   const [isVerified, setIsVerified] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState('general');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -270,26 +291,41 @@ export default function App() {
   const filteredMessages = messages.filter(m => m.channelId === activeChannelId);
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
-      <Sidebar activeChannel={activeChannelId} setActiveChannel={setActiveChannelId} />
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden relative">
+      <Sidebar 
+        activeChannel={activeChannelId} 
+        setActiveChannel={setActiveChannelId} 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       
       <main className="flex-1 flex flex-col min-w-0 bg-slate-50 relative">
         <header className="h-20 glass-morphism flex items-center justify-between px-8 z-20">
-          <div className="flex flex-col">
-            <h2 className="text-xl font-black text-slate-900 flex items-center gap-3">
-              <span className="bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center border border-slate-200">{activeChannel.icon}</span>
-              {activeChannel.name}
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm text-slate-600 group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 transition-transform duration-300 ${isSidebarOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-            </h2>
-            <p className="text-[11px] text-slate-500 font-bold ml-13 flex items-center gap-1.5 opacity-60">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-              TERHUBUNG KE SERVER KELAS
-            </p>
+            </button>
+            <div className="flex flex-col">
+              <h2 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                <span className="bg-slate-100 w-10 h-10 rounded-full flex items-center justify-center border border-slate-200">{activeChannel.icon}</span>
+                {activeChannel.name}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+              </h2>
+              <p className="text-[11px] text-slate-500 font-bold ml-13 flex items-center gap-1.5 opacity-60">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                TERHUBUNG KE SERVER KELAS
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex -space-x-3">
+            <div className="hidden sm:flex -space-x-3">
               {USERS.slice(0, 4).map(u => (
                 <img key={u.id} src={u.avatar} className="w-10 h-10 rounded-full border-4 border-white shadow-sm" alt="" />
               ))}
@@ -297,7 +333,7 @@ export default function App() {
                 +{USERS.length - 4}
               </div>
             </div>
-            <div className="h-8 w-px bg-slate-200"></div>
+            <div className="hidden sm:block h-8 w-px bg-slate-200"></div>
             <button className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm relative group">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -359,7 +395,7 @@ export default function App() {
               />
               
               <div className="flex items-center gap-2">
-                <button type="button" className="p-3 text-slate-400 hover:text-indigo-500 hover:bg-slate-50 rounded-2xl transition-all">
+                <button type="button" className="hidden xs:block p-3 text-slate-400 hover:text-indigo-500 hover:bg-slate-50 rounded-2xl transition-all">
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
